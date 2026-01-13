@@ -1,69 +1,50 @@
+CREATE DATABASE college_db;
 
-CREATE TABLE books (
-    book_id INT PRIMARY KEY,
-    title VARCHAR(100) NOT NULL,
-    author VARCHAR(100) NOT NULL,
-    available_copies INT CHECK (available_copies >= 0)
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL,
+    course VARCHAR(50),
+    marks INT CHECK (marks >= 0)
 );
 
-CREATE TABLE members (
-    member_id INT PRIMARY KEY,
-    member_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE
+CREATE TABLE courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(50) UNIQUE NOT NULL
 );
 
-CREATE TABLE book_issue (
-    issue_id INT PRIMARY KEY,
-    book_id INT REFERENCES books(book_id),
-    member_id INT REFERENCES members(member_id),
-    issue_date DATE,
-    return_date DATE
-);
+INSERT INTO courses (course_id, course_name)
+VALUES (1, 'BCA'),(2, 'MCA'),(3, 'BTech');
 
-INSERT INTO books VALUES
-(1, 'DBMS Concepts', 'Silberschatz', 5),
-(2, 'Operating System', 'Galvin', 3);
-
-
-
-INSERT INTO members VALUES
-(101, 'Amit Kumar', 'amit@gmail.com'),
-(102, 'Neha Sharma', 'neha@gmail.com');
-
--- BOOK ISSUE
-INSERT INTO book_issue(issue_id,book_id,member_id,issue_date,
-return_date)
+INSERT INTO students (student_id, student_name, course, marks)
 VALUES
-(1001, 1, 101, '2025-01-10', NULL);
+(101, 'Kartik', 'BCA', 78),
+(102, 'Sanchit', 'MCA', 85),
+(103, 'Naman', 'BTech', 72);
+
+SELECT * FROM students;
+
+SELECT student_name, marks
+FROM students
+WHERE marks > 75;
+
+UPDATE students
+SET marks = 88
+WHERE student_id = 101;
+
+DELETE FROM students WHERE student_id = 103;
+
+ALTER TABLE students
+ADD COLUMN email VARCHAR(100);
+
+ALTER TABLE students
+RENAME COLUMN course TO course_name;
+
+CREATE ROLE readonly_user
+LOGIN
+PASSWORD '1111';
+
+GRANT SELECT ON students TO readonly_user;
+REVOKE SELECT ON students FROM readonly_user;
 
 
-SELECT * FROM books;
-
-SELECT * FROM book_issue;
-
---UPDATE AVAILABLE BOOKS
-UPDATE books
-SET available_copies = available_copies - 1
-WHERE book_id = 1;
-
-
---Obsolete entries are old or outdated 
--- data that should be removed because they are no longer relevant.
-DELETE FROM book_issue
-WHERE return_date IS NOT NULL;
-
-
-SELECT CURRENT_USER
-
-CREATE  ROLE LIBRARIAN
-WITH LOGIN PASSWORD 'SHALABH2012@'
-
-
-
-SELECT CURRENT_USER;
-GRANT SELECT, INSERT, DELETE ON books TO Librarian;
-GRANT SELECT, INSERT, DELETE ON members TO Librarian;
-GRANT SELECT, INSERT, DELETE ON book_issue TO Librarian;
-
-REVOKE DELETE ON book_issue FROM Librarian;
 
